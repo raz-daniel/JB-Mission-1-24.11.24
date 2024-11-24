@@ -9,3 +9,9 @@ h1, h2 {
 img {
     width: 100px;
 }
+
+table * {
+padding-left: 15px;
+padding-right: 15px;
+text-align: center;
+}

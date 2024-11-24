@@ -1,94 +1,81 @@
 function collectData() {
-    const firstName = document.getElementById(`firstName`).value;
-    const lastName = document.getElementById(`lastName`).value;
-    const gender = document.querySelector(`input[name="gender"]:checked`).value;
-    const age = document.getElementById(`age`).value;
-    const phone = document.getElementById(`phone`).value
-    const email = document.getElementById(`email`).value
-    const color = document.getElementById(`color`).value
-    const character = document.getElementById(`character`).value
-    const continent = document.getElementById(`continent`).value
-    const birthDate = document.getElementById(`birthDate`).value
-    const sports = [];
-    document.querySelectorAll(`input[name="sport"]:checked`).forEach(checkbox => {
-        sports.push(checkbox.value);
-    });
-    const password = document.getElementById(`pass`).value
-    const comments = document.getElementById(`textArea`).value
-    const group = Math.floor(Math.random() * 4) + 1;
+    const productName = document.getElementById(`productName`).value;
+    const productPrice = document.getElementById(`productPrice`).value;
+    const productCategory = document.getElementById(`productCategory`).value;
+    const imageURL = document.getElementById(`imageURL`).value;
 
     return {
-        firstName: firstName,
-        lastName: lastName,
-        gender: gender,
-        age: age,
-        phone: phone,
-        email: email,
-        color: color,
-        character: character,
-        continent: continent,
-        birthDate: birthDate,
-        sports: sports,
-        password: password,
-        comments: comments,
-        group: group,
-    }
+        productName: productName,
+        productPrice: productPrice,
+        productCategory: productCategory,
+        imageURL: imageURL
+    }   
 }
 
-function generateHTML(studentData) {
+function generateHTML(productData, index) {
     const newHTML = `
-    <tr style="background-color: ${studentData.color};">
-                        <td>${studentData.firstName}</td>
-                        <td>${studentData.lastName}</td>
-                        <td>${studentData.gender}</td>
-                        <td>${studentData.age}</td>
-                        <td>${studentData.phone}</td>
-                        <td>${studentData.email}</td>
-                        <td><img src="${studentData.character}"></td>
-                        <td>${studentData.continent}</td>
-                        <td>${studentData.birthDate}</td>
-                        <td>${studentData.sports}</td>
-                        <td>${studentData.password}</td>
-                        <td>${studentData.comments}</td>
-                        <td>${studentData.group}</td>
-                    </tr>
+    <tr>
+                    <td>${productData.productName}</td>
+                    <td>${productData.productPrice} $</td>
+                    <td>${productData.productCategory}</td>
+                    <td><img src="${productData.imageURL}"></td>
+                    <td><button onclick="deleteProduct(${index})" class="btn btn-primary">Delete Item</button></td>
+                </tr>
     `
     return newHTML;
 }
 
-function renderHTML(newHTML) {
-    const newTable = document.getElementById(`studentsTable`);
-    newTable.innerHTML += newHTML;
-}
+function deleteProduct(index) {
+    let products = JSON.parse(localStorage.getItem('products')) || [];
+    products.splice(index, 1);
+    localStorage.setItem('products', JSON.stringify(products));
+    document.getElementById('productBodyTable').innerHTML = '';
 
-function addToStorage(studentData) {
-    const oldStorage = JSON.parse(localStorage.getItem(`students`)) || [];
-    oldStorage.push(studentData)
-    localStorage.setItem(`students`, JSON.stringify(oldStorage));
-}
-
-function clearForm() {
-    const form = document.getElementById(`studentsForm`);
-    form.reset();
-}
-
-function addStudent(event) {
-    event.preventDefault();
-    const studentData = collectData();
-    const newHTML = generateHTML(studentData);
-    renderHTML(newHTML);
-    addToStorage(studentData);
-    clearForm();
-}
-
-function importFromStorage() {
-    const imports = JSON.parse(localStorage.getItem(`students`)) || [];
-    if (imports) {
-        for (const student of imports) {
-            const newHTML = generateHTML(student);
-            renderHTML(newHTML);
-        }
+    let i = 0;
+    for (const product of products) {
+        const newHTML = generateHTML(product, i);
+        renderHTML(newHTML);
+        i++
     }
 }
 
-importFromStorage();
+function renderHTML(newHTML) {
+    const newTableRow = document.getElementById(`productBodyTable`);
+    newTableRow.innerHTML += newHTML;
+}
+
+function addToStorage(productData) {
+    const oldStorage = JSON.parse(localStorage.getItem(`products`)) || [];
+    oldStorage.push(productData)
+    localStorage.setItem(`products`, JSON.stringify(oldStorage));
+}
+
+function clearForm() {
+    const form = document.getElementById(`productsForm`);
+    form.reset();
+    document.getElementById(`productName`).focus();
+
+}
+
+function addProduct(event) {
+    event.preventDefault();
+    const productData = collectData();
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    const newHTML = generateHTML(productData, products.length);
+    renderHTML(newHTML);
+    addToStorage(productData);
+    clearForm();
+}
+
+function loadProducts() {
+    const products = JSON.parse(localStorage.getItem('products')) || [];
+    
+    let i=0;
+    for (const product of products) {
+        const newHTML=generateHTML(product, i)
+        renderHTML(newHTML);
+        i++
+    }
+}
+
+loadProducts();
