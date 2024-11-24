@@ -1,0 +1,17 @@
+html, body {
+    height: 100%;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+img {
+    width: 100px;
+}
+
+table * {
+padding-left: 15px;
+padding-right: 15px;
+text-align: center;
+}
